@@ -64,7 +64,8 @@ fun void playBongo() // b
 {
     0 => int startPos;
     1000 => int len;
-    
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
 
     // bongo 
     sndbufArray[sbc] => ADSR e_bongo => Pan2 p_bongo => dac.chan(finalCHAN);
@@ -91,6 +92,7 @@ fun void playChoke() // c
     2600 => int startPos;
     100 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // c 
     sndbufArray[sbc] => ADSR e_choke => Pan2 p_choke => dac.chan(finalCHAN);
@@ -114,7 +116,8 @@ fun void playDong() // d
 {
     0 => int startPos;
     250 => int len;
-    
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // d
     sndbufArray[sbc] => ADSR e_dong => Pan2 p_dong => dac.chan(finalCHAN);
@@ -138,7 +141,8 @@ fun void playBurp() // e
 {
     200 => int startPos;
     80 => int len;
-    
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // e
     sndbufArray[sbc] => ADSR e_burp => Pan2 p_burp => dac.chan(finalCHAN);
@@ -162,7 +166,8 @@ fun void playSteam() // f
 {
     500 => int startPos;
     200 => int len;
-    
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // f
     sndbufArray[sbc] => ADSR e_steam => Pan2 p_steam => dac.chan(finalCHAN);
@@ -187,6 +192,7 @@ fun void playDrag() // g
     210 => int startPos;
     80 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // g
     sndbufArray[sbc] => ADSR e_drag => Pan2 p_drag => dac.chan(finalCHAN);
@@ -211,6 +217,7 @@ fun void playSigh() // h
     250 => int startPos;
     150 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // h
     sndbufArray[sbc] => ADSR e_sigh => Pan2 p_sigh => dac.chan(finalCHAN);
@@ -235,6 +242,7 @@ fun void playWhee() // i
     150 => int startPos;
     150 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // i
     sndbufArray[sbc] => ADSR e_whee => Pan2 p_whee => dac.chan(finalCHAN);
@@ -259,6 +267,7 @@ fun void playBoil() // j
     320 => int startPos;
     100 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // j
     sndbufArray[sbc] => ADSR e_boil => Pan2 p_boil => dac.chan(finalCHAN);
@@ -282,6 +291,7 @@ fun void play808() // k
     0 => int startPos;
     700 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // j
     sndbufArray[sbc] => ADSR e_808 => Pan2 p_808 => dac.chan(finalCHAN);
@@ -306,6 +316,7 @@ fun void playBubbles() // l
     153 => int startPos;
     50 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // l
     sndbufArray[sbc] => ADSR e_bubbles => Pan2 p_bubbles => dac.chan(finalCHAN);
@@ -331,6 +342,7 @@ fun void playMama() // m
     200 => int startPos;
     100 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // m
     sndbufArray[sbc] => ADSR e_mama => Pan2 p_mama => dac.chan(finalCHAN);
@@ -355,6 +367,7 @@ fun void playMeow() // n
     50 => int startPos;
     150 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // n
     sndbufArray[sbc] => ADSR e_meow_synth => Pan2 p_meow_synth => dac.chan(finalCHAN);
@@ -379,6 +392,7 @@ fun void playTongue() // o
     620 => int startPos;
     100 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // o
     sndbufArray[sbc] => ADSR e_tongue => Pan2 p_tongue => dac.chan(finalCHAN);
@@ -403,6 +417,7 @@ fun void playPop() // p
     2450 => int startPos;
     50 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // p
     sndbufArray[sbc] => ADSR e_pop => JCRev r => Pan2 p_pop => dac.chan(finalCHAN);
@@ -429,6 +444,7 @@ fun void playSqueak() // q
     1050 => int startPos;
     150 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // q
     sndbufArray[sbc] => ADSR e_squeak => Pan2 p_squeak => dac.chan(finalCHAN);
@@ -453,6 +469,7 @@ fun void playGrr() // r
     50 => int startPos;
     200 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // r
     sndbufArray[sbc] => ADSR e_grr => Pan2 p_grr => dac.chan(finalCHAN);
@@ -477,6 +494,7 @@ fun void playWhisper() // s
     250 => int startPos;
     100 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // s
     sndbufArray[sbc] => ADSR e_whisper => Pan2 p_whisper => dac.chan(finalCHAN);
@@ -502,6 +520,7 @@ fun void playSideStick() // t
     10 => int startPos;
     200 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // t
     sndbufArray[sbc] => ADSR e_sidestick => Pan2 p_sidestick => dac.chan(finalCHAN);
@@ -527,6 +546,7 @@ fun void playAlien() // u
     100 => int startPos;
     70 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
     
     // u
     sndbufArray[sbc] => ADSR e_alien => Pan2 p_alien => dac.chan(finalCHAN);
@@ -550,7 +570,8 @@ fun void playVroom() // v
 {
     6300 => int startPos;
     250 => int len;
-    
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;    
 
     // v
     sndbufArray[sbc] => ADSR e_vroom => Pan2 p_vroom => dac.chan(finalCHAN);
@@ -575,6 +596,7 @@ fun void playMonkey() // w
     8200 => int startPos;
     300 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
 
     // w
     sndbufArray[sbc] => ADSR e_monkey => Pan2 p_monkey => dac.chan(finalCHAN);
@@ -599,6 +621,7 @@ fun void playBoing() // y
     20 => int startPos;
     240 => int len;
     
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
 
     // y
     sndbufArray[sbc] => ADSR e_boing => Pan2 p_boing => dac.chan(finalCHAN);
@@ -622,7 +645,8 @@ fun void playBuzz() // z
 {
     700 => int startPos;
     140 => int len;
-    
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;    
 
     // z
     sndbufArray[sbc] => ADSR e_buzz => Pan2 p_buzz => dac.chan(finalCHAN);
@@ -646,6 +670,9 @@ fun void playLight() // ,
 {
     0 => int startPos;
     500 => int len;
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
+
     sndbufArray[sbc] => ADSR e_light => Pan2 p_light => dac.chan(finalCHAN);
     me.sourceDir() + "SE031.wav" => sndbufArray[sbc].read;
     0.3 => sndbufArray[sbc].gain;
@@ -669,6 +696,9 @@ fun void playMedium() // .
 {
     0 => int startPos;
     500 => int len;
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
+
     sndbufArray[sbc] => ADSR e_medium => Pan2 p_medium => dac.chan(finalCHAN);
     me.sourceDir() + "SE032.wav" => sndbufArray[sbc].read;
     0.3 => sndbufArray[sbc].gain;
@@ -691,6 +721,9 @@ fun void playHeavy() // .
 {
     50 => int startPos;
     500 => int len;
+
+    (addCHAN % CHANRange) + startCHAN => int finalCHAN;
+
     sndbufArray[sbc] => ADSR e_heavy => Pan2 p_heavy => dac.chan(finalCHAN);
     me.sourceDir() + "SE033.wav" => sndbufArray[sbc].read;
     0.3 => sndbufArray[sbc].gain;
@@ -771,120 +804,94 @@ fun void changeChan( float which2 )
 // function that parses keyboard presses 
 fun void parseKeys( int which, float which2 )
 {
+    changeChan( which2 );
     
     // match numbers to letters and increment the appropriate layer variable 
     if( which == 30 ) { // a
-        changeChan( which2 );
         spork ~playSighReverse();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 48 ) { // b
         spork ~playBongo();
-        (sbc+1)%instanceCount => sbc;
     }   
     else if( which == 46 ) { // c
         spork ~playChoke();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 32 ) {  // d
         spork ~playDong();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 18 ) {  // e
         spork ~playBurp();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 33 ) {  // f
         spork ~playSteam();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 34 ) {  // g
         spork ~playDrag();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 35 ) {  // h
         spork ~playSigh();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 23 ) {  // i
         spork ~playWhee();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 36 ) {  // j
         spork ~playBoil();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 37 ) {  // k
         spork ~play808();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 38 ) {  // l
         spork ~playBubbles();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 50 ) {  // m
         spork ~playMama();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 49 ) {  // n
         spork ~playMeow();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 24 ) {  // o
         spork ~playTongue();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 25 ) {  // p
         spork ~playPop();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 16 ) {  // q
         spork ~playSqueak();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 19 ) {  // r
         spork ~playGrr();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 31 ) {  // s
         spork ~playWhisper();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 20 ) {  // t
         spork ~playSideStick();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 22 ) {  // u
         spork ~playAlien();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 47 ) {  // v
         spork ~playVroom();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 17 ) {  // w
         spork ~playMonkey();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 21 ) {  // y
         spork ~playBoing();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 44 ) {  // z
         spork ~playBuzz();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 51 ) {  // ,
         spork ~playLight();
-        (sbc+1)%instanceCount => sbc;
     }
     else if( which == 52 ) {  // .
-        spork ~playMedium();
-        (sbc+1)%instanceCount => sbc;
+        spork ~playMedium();    
     }
     else if( which == 53 ) {  // /
         spork ~playHeavy();
-        (sbc+1)%instanceCount => sbc;
     }
+    
+    (sbc+1)%instanceCount => sbc;
 }
 

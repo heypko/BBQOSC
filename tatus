@@ -1,0 +1,1782 @@
+[33mcommit e7dd5138ad8c022172ad576430538925c05fd202[m
+Author:  <kop4@rpi.edu>
+Date:   Sat Jun 3 14:54:39 2017 -0500
+
+    Transfer from internal git repo
+
+[1mdiff --git a/808.wav b/808.wav[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a20e768[m
+Binary files /dev/null and b/808.wav differ
+[1mdiff --git a/BBQ_client.ck b/BBQ_client.ck[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a95bcdf[m
+[1m--- /dev/null[m
+[1m+++ b/BBQ_client.ck[m
+[36m@@ -0,0 +1,67 @@[m
+[32m+[m[32m// launch as performer for BBQ_stereOSC[m
+[32m+[m
+[32m+[m[32m/*[m
+[32m+[m[32m    This IP needs to be changed[m
+[32m+[m[32m    to the address of the server[m
+[32m+[m[32m*/[m
+[32m+[m
+[32m+[m[32m// host name and port[m
+[32m+[m[32m"10.0.0.102" => string hostname;[m
+[32m+[m[32m6449 => int port;[m
+[32m+[m
+[32m+[m[32m// get command line[m
+[32m+[m[32mif( me.args() ) me.arg(0) => hostname;[m
+[32m+[m[32mif( me.args() > 1 ) me.arg(1) => Std.atoi => port;[m
+[32m+[m
+[32m+[m[32m// send object[m
+[32m+[m[32mOscOut xmit;[m
+[32m+[m
+[32m+[m[32m// aim the transmitter[m
+[32m+[m[32mxmit.dest( hostname, port );[m
+[32m+[m
+[32m+[m[32m/*[m
+[32m+[m[32m   This deviceNum needs[m
+[32m+[m[32m    to be changed per[m
+[32m+[m[32m          client[m
+[32m+[m[32m            |[m
+[32m+[m[32m            |[m
+[32m+[m[32m            V[m
+[32m+[m[32m*/[m
+[32m+[m
+[32m+[m[32m// the device number to open[m
+[32m+[m[32m0 => int deviceNum;[m
+[32m+[m
+[32m+[m[32m// instantiate a HidIn object[m
+[32m+[m[32mHid hi;[m
+[32m+[m[32m//KBHit kb;[m
+[32m+[m
+[32m+[m[32m// structure to hold HID messages[m
+[32m+[m[32mHidMsg msg;[m
+[32m+[m
+[32m+[m[32m// open keyboard[m
+[32m+[m[32mif( !hi.openKeyboard( deviceNum ) ) me.exit();[m
+[32m+[m[32m// successful! print name of device[m
+[32m+[m[32m<<< "keyboard '", hi.name(), "' ready" >>>;[m
+[32m+[m
+[32m+[m[32m// infinite time loop[m
+[32m+[m[32mwhile( true )[m
+[32m+[m[32m{[m[41m      [m
+[32m+[m[32m    hi => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    //get one or more messages[m
+[32m+[m[32m    while( hi.recv( msg ) )[m
+[32m+[m[32m    {[m
+[32m+[m[32m        // check for action type[m
+[32m+[m[32m        if( msg.isButtonDown() )[m
+[32m+[m[32m        {[m
+[32m+[m[32m            // start the message...[m
+[32m+[m[32m            xmit.start( "/sndbuf/bbq/number" );[m
+[32m+[m[32m            msg.which => int num => xmit.add;[m
+[32m+[m[32m            // send[m
+[32m+[m[32m            xmit.send();[m
+[32m+[m[32m            <<< "sent (via OSC):", num >>>;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[1mdiff --git a/BBQ_clientSELECT.ck b/BBQ_clientSELECT.ck[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4067229[m
+[1m--- /dev/null[m
+[1m+++ b/BBQ_clientSELECT.ck[m
+[36m@@ -0,0 +1,126 @@[m
+[32m+[m[32m// launch as performer for BBQ_stereOSC[m
+[32m+[m
+[32m+[m[32m/*[m
+[32m+[m[32m    This IP needs to be changed[m
+[32m+[m[32m    to the address of the server[m
+[32m+[m[32m*/[m
+[32m+[m
+[32m+[m[32m// host name and port[m
+[32m+[m[32m"localhost" => string hostname;[m
+[32m+[m[32m6449 => int port;[m
+[32m+[m[32m"notmac" => string choice;[m
+[32m+[m[32m1 => int pan;[m
+[32m+[m[32m0 => int deviceNum;[m
+[32m+[m
+[32m+[m[32m// get command line[m
+[32m+[m[32mif( me.args() ) me.arg(0) => hostname;[m
+[32m+[m[32mif( me.args() > 1 ) me.arg(1) => choice;[m
+[32m+[m[32mif( me.args() > 2 ) me.arg(2) => Std.atoi => pan;[m
+[32m+[m[32mif( me.args() > 3 ) me.arg(3) => Std.atoi => deviceNum;[m
+[32m+[m[41m    [m
+[32m+[m
+[32m+[m[32m// send object[m
+[32m+[m[32mOscSend xmit;[m
+[32m+[m
+[32m+[m[32m// aim the transmitter[m
+[32m+[m[32mxmit.setHost( hostname, port );[m
+[32m+[m
+[32m+[m[32m// instantiate a HidIn object[m
+[32m+[m[32mHid hi;[m
+[32m+[m[32m//KBHit kb;[m
+[32m+[m
+[32m+[m[32m// structure to hold HID messages[m
+[32m+[m[32mHidMsg msg;[m
+[32m+[m
+[32m+[m[32m// open keyboard[m
+[32m+[m[32mif( !hi.openKeyboard( deviceNum ) ) me.exit();[m
+[32m+[m[32m// successful! print name of device[m
+[32m+[m[32m<<< "keyboard '", hi.name(), "' ready" >>>;[m
+[32m+[m
+[32m+[m[32m//if ( choice == "mac" ) {[m[41m                [m
+[32m+[m[32m//    parseMac(msg.which) => xmit.addInt;[m
+[32m+[m[32m//} else {[m
+[32m+[m[32m//    msg.which => xmit.addInt;[m
+[32m+[m[32m//}[m
+[32m+[m
+[32m+[m[32m// infinite time loop[m
+[32m+[m[32mwhile( true )[m
+[32m+[m[32m{[m[41m      [m
+[32m+[m[32m    hi => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    //get one or more messages[m
+[32m+[m[32m    while( hi.recv( msg ) )[m
+[32m+[m[32m    {[m
+[32m+[m[32m        // check for action type[m
+[32m+[m[32m        if( msg.isButtonDown() )[m
+[32m+[m[32m        {[m
+[32m+[m[32m            // start the message...[m
+[32m+[m[32m            xmit.startMsg( "/sndbuf/bbq/number", "i f" );[m
+[32m+[m[41m            [m
+[32m+[m[32m            int num;[m
+[32m+[m[32m            if ( choice == "mac" ) {[m[41m                [m
+[32m+[m[32m                parseMac(msg.which) => xmit.addInt;[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                msg.which => xmit.addInt;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            pan => xmit.addFloat;[m
+[32m+[m[41m            [m
+[32m+[m[32m            // send[m
+[32m+[m[32m            <<< "sent (via OSC):", num, pan >>>;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m[32mfun int parseMac( int which )[m
+[32m+[m[32m{[m
+[32m+[m[32m    int num;[m
+[32m+[m[32m    if( which == 4 ) // a[m
+[32m+[m		[32m30 => num;[m
+[32m+[m[32m    else if( which == 5 ) // b[m
+[32m+[m		[32m48 => num;[m
+[32m+[m[32m    else if( which == 6 ) // c[m
+[32m+[m		[32m46 => num;[m
+[32m+[m[32m    else if( which == 7 ) // d[m
+[32m+[m		[32m32 => num;[m
+[32m+[m[32m    else if( which == 8 ) // e[m
+[32m+[m		[32m18 => num;[m
+[32m+[m[32m    else if( which == 9 ) // f[m
+[32m+[m		[32m33 => num;[m
+[32m+[m[32m    else if( which == 10 ) // g[m
+[32m+[m		[32m34 => num;[m
+[32m+[m[32m    else if( which == 11 ) // h[m
+[32m+[m		[32m35 => num;[m
+[32m+[m[32m    else if( which == 12 ) // i[m
+[32m+[m		[32m23 => num;[m
+[32m+[m[32m    else if( which == 13 ) // j[m
+[32m+[m		[32m36 => num;[m
+[32m+[m[32m    else if( which == 15 ) // l[m
+[32m+[m		[32m38 => num;[m
+[32m+[m[32m    else if( which == 16 ) // m[m
+[32m+[m		[32m50 => num;[m
+[32m+[m[32m    else if( which == 17 ) // n[m
+[32m+[m		[32m49 => num;[m
+[32m+[m[32m    else if( which == 18 ) // o[m
+[32m+[m		[32m24 => num;[m
+[32m+[m[32m    else if( which == 19 ) // p[m
+[32m+[m		[32m25 => num;[m
+[32m+[m[32m    else if( which == 20 ) // q[m
+[32m+[m		[32m16 => num;[m
+[32m+[m[32m    else if( which == 21 ) // r[m
+[32m+[m		[32m19 => num;[m
+[32m+[m[32m    else if( which == 22 ) // s[m
+[32m+[m		[32m31 => num;[m
+[32m+[m[32m    else if( which == 23 ) // t[m
+[32m+[m		[32m20 => num;[m
+[32m+[m[32m    else if( which == 24 ) // u[m
+[32m+[m		[32m22 => num;[m
+[32m+[m[32m    else if( which == 25 ) // v[m
+[32m+[m		[32m47 => num;[m
+[32m+[m[32m    else if( which == 26 ) // w[m
+[32m+[m		[32m17 => num;[m
+[32m+[m[32m    else if( which == 28 ) // y[m
+[32m+[m		[32m21 => num;[m
+[32m+[m[32m    else if( which == 29 ) // z[m
+[32m+[m[32m        44 => num;[m
+[32m+[m[32m}[m
+[1mdiff --git a/BBQ_server.ck b/BBQ_server.ck[m
+[1mnew file mode 100644[m
+[1mindex 0000000..f5cd811[m
+[1m--- /dev/null[m
+[1m+++ b/BBQ_server.ck[m
+[36m@@ -0,0 +1,1001 @@[m
+[32m+[m[32m// launch as server for BBQ_client_w10.ckbbq[m
+[32m+[m
+[32m+[m[32m// BBQ by Hana Shin[m
+[32m+[m[32m// 2014[m
+[32m+[m
+[32m+[m[32m// b,,b,,q, b,,b,,q, b,,b,,q, b,,b,,q,[m[41m [m
+[32m+[m[32m// b,spamq b,spamq b,spamq b,spamg bv,szzw[m
+[32m+[m[32m// bdot,ms bdot,ms bdot,ms bdoamar[m
+[32m+[m[32m// bdty,,a, bdtyhha, bdt,bdt, ffszvcp,[m
+[32m+[m[32m// bdtfsi,, bdtfsiu, b,ssvj,, dahda,a,[m
+[32m+[m[32m// blop,op, blop,op, blop,op, bloblop,[m[41m [m
+[32m+[m[32m// sndbufArray[sbc],,, sponcc,, bswqjspf bahsz,,,[m
+[32m+[m
+[32m+[m[32m// rahrah,,roar,rr,r,grr,roar,ra[m
+[32m+[m[32m// rahrah,,roar,rr,r,grr,roar,rah[m
+[32m+[m[32m// lollpop lollipoplollpop lollpom[m
+[32m+[m[32m// lollpop lollipoploll[m
+[32m+[m[32m// munch,y, munchii, munomnom umnumnua[m[41m [m
+[32m+[m
+[32m+[m[32m// wumpow,, wum,now, wumpowp lollpur[m
+[32m+[m[32m// s,snap,, oshnaps, sndbufArray[sbc]sloc, snapz[m
+[32m+[m[32m// zz,sfaz, zz,asazz ,asfzza, shizzle[m
+[32m+[m
+[32m+[m[32m// b,,b,,q, b,,b,,q, b,,b,,q, b,,b,,q,[m[41m [m
+[32m+[m[32m// b,,b qii, b,,b qui b,uibuy tstsha,,[m[41m [m
+[32m+[m[32m// b,sizzle b,sizzle b,sizzle shizip,, a[m
+[32m+[m
+[32m+[m[32m0 => int startCHAN;                 // Audio Channel Start Index[m
+[32m+[m[32m1 => int endCHAN;                   // Audio Channel End Index[m
+[32m+[m
+[32m+[m[32m1.0 => float numpadRate;[m
+[32m+[m
+[32m+[m[32m0 => int sbc;                       // sndbufArray Counter[m
+[32m+[m[32m100 => int instanceCount;           // size of sndbufArray[m
+[32m+[m[32mSndBuf sndbufArray[instanceCount];  // Initialize sndbufArray[m
+[32m+[m
+[32m+[m[32mfun void playSighReverse() // a[m
+[32m+[m[32m{[m
+[32m+[m[32m    10 => int startPos;[m
+[32m+[m[32m    250 => int len;[m
+[32m+[m[32m    <<<sbc>>>;[m
+[32m+[m
+[32m+[m[32m    // a[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_sighReverse => Pan2 p_sighReverse => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/khaa.wav" => string fname;[m
+[32m+[m[32m    fname => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.7 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_sighReverse.pan;[m
+[32m+[m[32m    e_sighReverse.set( 10::ms, 10::ms, 0.9, 100::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_sighReverse.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_sighReverse.keyOff();[m
+[32m+[m[32m    10::ms => now;[m[41m   [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBongo() // b[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    1000 => int len;[m
+[32m+[m[32m    <<<sbc>>>;[m
+[32m+[m[32m    // bongo[m[41m [m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_bongo => Pan2 p_bongo => dac.chan(startCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/bongo.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    .5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.1 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0 ) => p_bongo.pan;[m
+[32m+[m[32m    e_bongo.set( 10::ms, 10::ms, 0.6, 100::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_bongo.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_bongo.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_bongo;[m
+[32m+[m[32m    e_bongo =< p_bongo;[m
+[32m+[m[32m    p_bongo =< dac;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playChoke() // c[m
+[32m+[m[32m{[m
+[32m+[m[32m    2600 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // c[m[41m [m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_choke => Pan2 p_choke => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/choke.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.4 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_choke.pan;[m
+[32m+[m[32m    e_choke.set( 10::ms, 10::ms, 0.9, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_choke.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_choke.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_choke;[m
+[32m+[m[32m    e_choke =< p_choke;[m
+[32m+[m[32m    p_choke =< dac;[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playDong() // d[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    250 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // d[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_dong => Pan2 p_dong => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/drum_dong.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.7 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    0.9 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_dong.pan;[m
+[32m+[m[32m    e_dong.set( 20::ms, 30::ms, 0.8, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_dong.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_dong.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_dong;[m
+[32m+[m[32m    e_dong =< p_dong;[m
+[32m+[m[32m    p_dong =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBurp() // e[m
+[32m+[m[32m{[m
+[32m+[m[32m    200 => int startPos;[m
+[32m+[m[32m    80 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // e[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_burp => Pan2 p_burp => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/burp.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_burp.pan;[m
+[32m+[m[32m    e_burp.set( 20::ms, 30::ms, 0.8, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_burp.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_burp.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_burp;[m
+[32m+[m[32m    e_burp =< p_burp;[m
+[32m+[m[32m    p_burp =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playSteam() // f[m
+[32m+[m[32m{[m
+[32m+[m[32m    500 => int startPos;[m
+[32m+[m[32m    200 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // f[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_steam => Pan2 p_steam => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/steam.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    9 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_steam.pan;[m
+[32m+[m[32m    e_steam.set( 100::ms, 1::ms, 0.9, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_steam.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_steam.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_steam;[m
+[32m+[m[32m    e_steam =< p_steam;[m
+[32m+[m[32m    p_steam =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playDrag() // g[m
+[32m+[m[32m{[m
+[32m+[m[32m    210 => int startPos;[m
+[32m+[m[32m    80 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // g[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_drag => Pan2 p_drag => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/choke2.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_drag.pan;[m
+[32m+[m[32m    e_drag.set( 100::ms, 1::ms, 0.9, 80::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_drag.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_drag.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_drag;[m
+[32m+[m[32m    e_drag =< p_drag;[m
+[32m+[m[32m    p_drag =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playSigh() // h[m
+[32m+[m[32m{[m
+[32m+[m[32m    250 => int startPos;[m
+[32m+[m[32m    150 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // h[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_sigh => Pan2 p_sigh => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/sigh.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1.2 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_sigh.pan;[m
+[32m+[m[32m    e_sigh.set( 10::ms, 1::ms, 0.9, 80::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_sigh.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_sigh.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_sigh;[m
+[32m+[m[32m    e_sigh =< p_sigh;[m
+[32m+[m[32m    p_sigh =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playWhee() // i[m
+[32m+[m[32m{[m
+[32m+[m[32m    150 => int startPos;[m
+[32m+[m[32m    150 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // i[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_whee => Pan2 p_whee => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/whee.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_whee.pan;[m
+[32m+[m[32m    e_whee.set( 20::ms, 30::ms, 0.8, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_whee.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_whee.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_whee;[m
+[32m+[m[32m    e_whee =< p_whee;[m
+[32m+[m[32m    p_whee =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBoil() // j[m
+[32m+[m[32m{[m
+[32m+[m[32m    320 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // j[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_boil => Pan2 p_boil => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/boil.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_boil.pan;[m
+[32m+[m[32m    e_boil.set( 30::ms, 10::ms, 0.8, 200::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_boil.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_boil.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_boil;[m
+[32m+[m[32m    e_boil =< p_boil;[m
+[32m+[m[32m    p_boil =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void play808() // k[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    700 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // j[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_808 => Pan2 p_808 => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/808.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_808.pan;[m
+[32m+[m[32m    e_808.set( 10::ms, 10::ms, 0.6, 100::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_808.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_808.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_808;[m
+[32m+[m[32m    e_808 =< p_808;[m
+[32m+[m[32m    p_808 =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBubbles() // l[m
+[32m+[m[32m{[m
+[32m+[m[32m    153 => int startPos;[m
+[32m+[m[32m    50 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // l[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_bubbles => Pan2 p_bubbles => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/bubbles.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    3000 => sndbufArray[sbc].pos;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_bubbles.pan;[m
+[32m+[m[32m    e_bubbles.set( 30::ms, 1::ms, 1, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_bubbles.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_bubbles.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_bubbles;[m
+[32m+[m[32m    e_bubbles =< p_bubbles;[m
+[32m+[m[32m    p_bubbles =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playMama() // m[m
+[32m+[m[32m{[m
+[32m+[m[32m    200 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // m[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_mama => Pan2 p_mama => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/mama.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    0.9 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_mama.pan;[m
+[32m+[m[32m    e_mama.set( 80::ms, 1::ms, 1, 20::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_mama.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_mama.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_mama;[m
+[32m+[m[32m    e_mama =< p_mama;[m
+[32m+[m[32m    p_mama =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playMeow() // n[m
+[32m+[m[32m{[m
+[32m+[m[32m    50 => int startPos;[m
+[32m+[m[32m    150 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // n[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_meow_synth => Pan2 p_meow_synth => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/crying.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    4 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    0.8 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_meow_synth.pan;[m
+[32m+[m[32m    e_meow_synth.set( 100::ms, 10::ms, 0.1, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_meow_synth.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_meow_synth.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_meow_synth;[m
+[32m+[m[32m    e_meow_synth =< p_meow_synth;[m
+[32m+[m[32m    p_meow_synth =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playTongue() // o[m
+[32m+[m[32m{[m
+[32m+[m[32m    620 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // o[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_tongue => Pan2 p_tongue => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/tongue.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_tongue.pan;[m
+[32m+[m[32m    e_tongue.set( 50::ms, 10::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_tongue.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_tongue.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_tongue;[m
+[32m+[m[32m    e_tongue =< p_tongue;[m
+[32m+[m[32m    p_tongue =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playPop() // p[m
+[32m+[m[32m{[m
+[32m+[m[32m    2450 => int startPos;[m
+[32m+[m[32m    50 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // p[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_pop => JCRev r => Pan2 p_pop => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/pop2.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0 => sndbufArray[sbc].pos;[m
+[32m+[m[32m    0.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    0.01 => r.mix;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_pop.pan;[m
+[32m+[m[32m    e_pop.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_pop.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_pop.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_pop;[m
+[32m+[m[32m    e_pop =< p_pop;[m
+[32m+[m[32m    p_pop =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playSqueak() // q[m
+[32m+[m[32m{[m
+[32m+[m[32m    1050 => int startPos;[m
+[32m+[m[32m    150 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[32m    // q[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_squeak => Pan2 p_squeak => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/squeak.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( 0, 0.8 ) => p_squeak.pan;[m
+[32m+[m[32m    e_squeak.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_squeak.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_squeak.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_squeak;[m
+[32m+[m[32m    e_squeak =< p_squeak;[m
+[32m+[m[32m    p_squeak =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playGrr() // r[m
+[32m+[m[32m{[m
+[32m+[m[32m    50 => int startPos;[m
+[32m+[m[32m    200 => int len;[m
+[32m+[m[32m    // r[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_grr => Pan2 p_grr => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/grr.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_grr.pan;[m
+[32m+[m[32m    e_grr.set( 100::ms, 10::ms, 0.9, 100::ms );[m
+[32m+[m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_grr.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_grr.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_grr;[m
+[32m+[m[32m    e_grr =< p_grr;[m
+[32m+[m[32m    p_grr =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playWhisper() // s[m
+[32m+[m[32m{[m
+[32m+[m[32m    250 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[32m    // s[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_whisper => Pan2 p_whisper => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/whisper.aiff" => sndbufArray[sbc].read;[m
+[32m+[m[32m    8 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_whisper.pan;[m
+[32m+[m[32m    e_whisper.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_whisper.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_whisper.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_whisper;[m
+[32m+[m[32m    e_whisper =< p_whisper;[m
+[32m+[m[32m    p_whisper =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playSideStick() // t[m
+[32m+[m[32m{[m
+[32m+[m[32m    10 => int startPos;[m
+[32m+[m[32m    200 => int len;[m
+[32m+[m[32m    // t[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_sidestick => Pan2 p_sidestick => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/drum_sideStick.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.7 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_sidestick.pan;[m
+[32m+[m[32m    e_sidestick.set( 0::ms, 50::ms, 0.8, 150::ms );[m
+[32m+[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_sidestick.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_sidestick.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_sidestick;[m
+[32m+[m[32m    e_sidestick =< p_sidestick;[m
+[32m+[m[32m    p_sidestick =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playAlien() // u[m
+[32m+[m[32m{[m
+[32m+[m[32m    100 => int startPos;[m
+[32m+[m[32m    70 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_alien => Pan2 p_alien => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/alien.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.8 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.05 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_alien.pan;[m
+[32m+[m[32m    e_alien.set( 1::ms, 50::ms, 0.8, 100::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_alien.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_alien.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_alien;[m
+[32m+[m[32m    e_alien =< p_alien;[m
+[32m+[m[32m    p_alien =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playVroom() // v[m
+[32m+[m[32m{[m
+[32m+[m[32m    6300 => int startPos;[m
+[32m+[m[32m    250 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_vroom => Pan2 p_vroom => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/vroom.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.5 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_vroom.pan;[m
+[32m+[m[32m    e_vroom.set( 50::ms, 50::ms, 0.9, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_vroom.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_vroom.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_vroom;[m
+[32m+[m[32m    e_vroom =< p_vroom;[m
+[32m+[m[32m    p_vroom =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playMonkey() // w[m
+[32m+[m[32m{[m
+[32m+[m[32m    8200 => int startPos;[m
+[32m+[m[32m    300 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_monkey => Pan2 p_monkey => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/monkey.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_monkey.pan;[m
+[32m+[m[32m    e_monkey.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_monkey.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_monkey.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_monkey;[m
+[32m+[m[32m    e_monkey =< p_monkey;[m
+[32m+[m[32m    p_monkey =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBoing() // y[m
+[32m+[m[32m{[m
+[32m+[m[32m    20 => int startPos;[m
+[32m+[m[32m    240 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_boing => Pan2 p_boing => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/boing.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    .4 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_boing.pan;[m
+[32m+[m[32m    e_boing.set( 5::ms, 50::ms, 0.9, 80::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_boing.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_boing.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_boing;[m
+[32m+[m[32m    e_boing =< p_boing;[m
+[32m+[m[32m    p_boing =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBuzz() // z[m
+[32m+[m[32m{[m
+[32m+[m[32m    700 => int startPos;[m
+[32m+[m[32m    140 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_buzz => Pan2 p_buzz => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "/buzz.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.5 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_buzz.pan;[m
+[32m+[m[32m    e_buzz.set( 50::ms, 50::ms, 0.9, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_buzz.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_buzz.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_buzz;[m
+[32m+[m[32m    e_buzz =< p_buzz;[m
+[32m+[m[32m    p_buzz =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playLight() // ,[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    500 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_light => Pan2 p_light => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "SE031.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_light.pan;[m
+[32m+[m[32m    e_light.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_light.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_light.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_light;[m
+[32m+[m[32m    e_light =< p_light;[m
+[32m+[m[32m    p_light =< dac;[m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playMedium() // .[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    500 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_medium => Pan2 p_medium => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "SE032.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_medium.pan;[m
+[32m+[m[32m    e_medium.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_medium.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_medium.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_medium;[m
+[32m+[m[32m    e_medium =< p_medium;[m
+[32m+[m[32m    p_medium =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playHeavy() // .[m
+[32m+[m[32m{[m
+[32m+[m[32m    50 => int startPos;[m
+[32m+[m[32m    500 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_heavy => Pan2 p_heavy => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "SE033.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_heavy.pan;[m
+[32m+[m[32m    e_heavy.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_heavy.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_heavy.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_heavy;[m
+[32m+[m[32m    e_heavy =< p_heavy;[m
+[32m+[m[32m    p_heavy =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m[32mfun void playLow1() //[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    582 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_low1 => Pan2 p_low1 => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "numpad/traumaLOW.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    numpadRate => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_low1.pan;[m
+[32m+[m[32m    e_low1.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_low1.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_low1.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_low1;[m
+[32m+[m[32m    e_low1 =< p_low1;[m
+[32m+[m[32m    p_low1 =< dac;[m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playLow2() //[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    879 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_low2 => Pan2 p_low2 => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "numpad/traumaLOW2.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    numpadRate => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_low2.pan;[m
+[32m+[m[32m    e_low2.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_low2.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_low2.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_low2;[m
+[32m+[m[32m    e_low2 =< p_low2;[m
+[32m+[m[32m    p_low2 =< dac;[m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playLow3() //[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    879 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_low3 => Pan2 p_low3 => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "numpad/traumaLOW3.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    numpadRate => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_low3.pan;[m
+[32m+[m[32m    e_low3.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_low3.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_low3.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_low3;[m
+[32m+[m[32m    e_low3 =< p_low3;[m
+[32m+[m[32m    p_low3 =< dac;[m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playMid1() //[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    879 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_mid1 => Pan2 p_mid1 => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "numpad/traumaMID.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    numpadRate => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_mid1.pan;[m
+[32m+[m[32m    e_mid1.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_mid1.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_mid1.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_mid1;[m
+[32m+[m[32m    e_mid1 =< p_mid1;[m
+[32m+[m[32m    p_mid1 =< dac;[m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playMid2() //[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    879 => int len;[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_mid2 => Pan2 p_mid2 => dac.chan(Std.rand2(startCHAN,endCHAN));[m
+[32m+[m[32m    me.sourceDir() + "numpad/traumaMID2.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.3 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    numpadRate => sndbufArray[sbc].rate;[m
+[32m+[m[32m    Std.rand2f( -0.8, 0.8 ) => p_mid2.pan;[m
+[32m+[m[32m    e_mid2.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_mid2.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_mid2.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_mid2;[m
+[32m+[m[32m    e_mid2 =< p_mid2;[m
+[32m+[m[32m    p_mid2 =< dac;[m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m[32mfun void play( SndBuf sample, int startPos, ADSR env, int len ) // in ms[m
+[32m+[m[32m{[m
+[32m+[m[32m    (startPos*44.100) $ int => sample.pos;[m
+[32m+[m[32m    env.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    env.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m// create our OSC receiver[m
+[32m+[m[32mOscIn oin;[m
+[32m+[m[32m// create our OSC message[m
+[32m+[m[32mOscMsg msg;[m
+[32m+[m[32m// use port 6449[m
+[32m+[m[32m6449 => oin.port;[m
+[32m+[m[32m// create an address in the receiver[m
+[32m+[m[32moin.addAddress( "/sndbuf/bbq/number, i" );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m// infinite event loop[m
+[32m+[m[32mwhile( true )[m
+[32m+[m[32m{[m[41m       [m
+[32m+[m[32m    // wait for event to arrive[m
+[32m+[m[32m    oin => now;[m
+[32m+[m
+[32m+[m[32m    // grab the next message from the queue.[m[41m [m
+[32m+[m[32m    while ( oin.recv(msg) != 0 )[m
+[32m+[m[32m    {[m[41m   [m
+[32m+[m[32m        // getFloat fetches the expected float (as indicated by "f")[m
+[32m+[m[32m        msg.getInt(0) => int which;[m
+[32m+[m[32m        // print[m
+[32m+[m[32m        <<< "parsing (via OSC):", which >>>;[m
+[32m+[m[32m        // pass to player[m
+[32m+[m[32m        parseKeys( which );[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// function that parses keyboard presses[m[41m [m
+[32m+[m[32mfun void parseKeys( int which )[m
+[32m+[m[32m{[m
+[32m+[m[32m    // match numbers to letters and increment the appropriate layer variable[m[41m [m
+[32m+[m[32m    if( which == 30 ) { // a[m
+[32m+[m[32m        spork ~playSighReverse();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 48 ) { // b[m
+[32m+[m[32m        spork ~playBongo();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m[41m   [m
+[32m+[m[32m    else if( which == 46 ) { // c[m
+[32m+[m[32m        spork ~playChoke();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 32 ) {  // d[m
+[32m+[m[32m        spork ~playDong();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 18 ) {  // e[m
+[32m+[m[32m        spork ~playBurp();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 33 ) {  // f[m
+[32m+[m[32m        spork ~playSteam();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 34 ) {  // g[m
+[32m+[m[32m        spork ~playDrag();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 35 ) {  // h[m
+[32m+[m[32m        spork ~playSigh();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 23 ) {  // i[m
+[32m+[m[32m        spork ~playWhee();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 36 ) {  // j[m
+[32m+[m[32m        spork ~playBoil();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 37 ) {  // k[m
+[32m+[m[32m        spork ~play808();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 38 ) {  // l[m
+[32m+[m[32m        spork ~playBubbles();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 50 ) {  // m[m
+[32m+[m[32m        spork ~playMama();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 49 ) {  // n[m
+[32m+[m[32m        spork ~playMeow();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 24 ) {  // o[m
+[32m+[m[32m        spork ~playTongue();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 25 ) {  // p[m
+[32m+[m[32m        spork ~playPop();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 16 ) {  // q[m
+[32m+[m[32m        spork ~playSqueak();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 19 ) {  // r[m
+[32m+[m[32m        spork ~playGrr();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 31 ) {  // s[m
+[32m+[m[32m        spork ~playWhisper();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 20 ) {  // t[m
+[32m+[m[32m        spork ~playSideStick();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 22 ) {  // u[m
+[32m+[m[32m        spork ~playAlien();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 47 ) {  // v[m
+[32m+[m[32m        spork ~playVroom();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 17 ) {  // w[m
+[32m+[m[32m        spork ~playMonkey();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 21 ) {  // y[m
+[32m+[m[32m        spork ~playBoing();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 44 ) {  // z[m
+[32m+[m[32m        spork ~playBuzz();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 51 ) {  // ,[m
+[32m+[m[32m        spork ~playLight();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 52 ) {  // .[m
+[32m+[m[32m        spork ~playMedium();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 53 ) {  // /[m
+[32m+[m[32m        spork ~playHeavy();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[41m    [m
+[32m+[m[32m    // Numpad[m
+[32m+[m[32m    else if( which == 79 ) {  // 1[m
+[32m+[m[32m        spork ~playLow1();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 80 ) {  // 2[m
+[32m+[m[32m        spork ~playLow2();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 81 ) {  // 3[m
+[32m+[m[32m        spork ~playLow3();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[41m    [m
+[32m+[m[32m    else if( which == 75 ) {  // 1[m
+[32m+[m[32m        spork ~playMid1();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 76 ) {  // 2[m
+[32m+[m[32m        spork ~playMid2();[m
+[32m+[m[32m        (sbc+1)%instanceCount => sbc;[m
+[32m+[m[32m    }[m
+[32m+[m[41m    [m
+[32m+[m[32m    else if( which == 78 ) {  // +[m
+[32m+[m[32m        numpadRate + .1 => numpadRate;[m
+[32m+[m[32m        <<<"numpadRate = " + numpadRate>>>;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else if( which == 74 ) {  // -[m
+[32m+[m[32m        numpadRate - .1 => numpadRate;[m
+[32m+[m[32m        <<<"numpadRate = " + numpadRate>>>;[m
+[32m+[m[32m    }[m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[1mdiff --git a/BBQ_serverSELECT.ck b/BBQ_serverSELECT.ck[m
+[1mnew file mode 100644[m
+[1mindex 0000000..eb72b7d[m
+[1m--- /dev/null[m
+[1m+++ b/BBQ_serverSELECT.ck[m
+[36m@@ -0,0 +1,890 @@[m
+[32m+[m[32m// launch as server for BBQ_client_w10.ckbbq[m
+[32m+[m
+[32m+[m[32m// BBQ by Hana Shin[m
+[32m+[m[32m// 2014[m
+[32m+[m
+[32m+[m[32m// b,,b,,q, b,,b,,q, b,,b,,q, b,,b,,q,[m[41m [m
+[32m+[m[32m// b,spamq b,spamq b,spamq b,spamg bv,szzw[m
+[32m+[m[32m// bdot,ms bdot,ms bdot,ms bdoamar[m
+[32m+[m[32m// bdty,,a, bdtyhha, bdt,bdt, ffszvcp,[m
+[32m+[m[32m// bdtfsi,, bdtfsiu, b,ssvj,, dahda,a,[m
+[32m+[m[32m// blop,op, blop,op, blop,op, bloblop,[m[41m [m
+[32m+[m[32m// sndbufArray[sbc],,, sponcc,, bswqjspf bahsz,,,[m
+[32m+[m
+[32m+[m[32m// rahrah,,roar,rr,r,grr,roar,ra[m
+[32m+[m[32m// rahrah,,roar,rr,r,grr,roar,rah[m
+[32m+[m[32m// lollpop lollipoplollpop lollpom[m
+[32m+[m[32m// lollpop lollipoploll[m
+[32m+[m[32m// munch,y, munchii, munomnom umnumnua[m[41m [m
+[32m+[m
+[32m+[m[32m// wumpow,, wum,now, wumpowp lollpur[m
+[32m+[m[32m// s,snap,, oshnaps, sndbufArray[sbc]sloc, snapz[m
+[32m+[m[32m// zz,sfaz, zz,asazz ,asfzza, shizzle[m
+[32m+[m
+[32m+[m[32m// b,,b,,q, b,,b,,q, b,,b,,q, b,,b,,q,[m[41m [m
+[32m+[m[32m// b,,b qii, b,,b qui b,uibuy tstsha,,[m[41m [m
+[32m+[m[32m// b,sizzle b,sizzle b,sizzle shizip,, a[m
+[32m+[m
+[32m+[m[32m0 => int startCHAN;                 // Audio Channel Start Index[m
+[32m+[m[32m1 => int endCHAN;                   // Audio Channel End Index[m
+[32m+[m
+[32m+[m[32mendCHAN - startCHAN + 1 => int CHANRange;[m
+[32m+[m[32m0 => int addCHAN;[m
+[32m+[m[32m(addCHAN % CHANRange) + startCHAN => int finalCHAN;[m
+[32m+[m
+[32m+[m[32m0 => int sbc;                       // sndbufArray Counter[m
+[32m+[m[32m100 => int instanceCount;           // size of sndbufArray[m
+[32m+[m[32mSndBuf sndbufArray[instanceCount];  // Initialize sndbufArray[m
+[32m+[m
+[32m+[m[32mfun void playSighReverse() // a[m
+[32m+[m[32m{[m
+[32m+[m[32m    10 => int startPos;[m
+[32m+[m[32m    250 => int len;[m
+[32m+[m
+[32m+[m[32m    <<<"finalCHAN = " + finalCHAN>>>;[m
+[32m+[m[32m    (addCHAN % CHANRange) + startCHAN => int finalCHAN;[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    // a[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_sighReverse => Pan2 p_sighReverse => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/khaa.wav" => string fname;[m
+[32m+[m[32m    fname => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.7 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_sighReverse.set( 10::ms, 10::ms, 0.9, 100::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_sighReverse.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_sighReverse.keyOff();[m
+[32m+[m[32m    10::ms => now;[m[41m   [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBongo() // b[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    1000 => int len;[m
+[32m+[m[41m    [m
+[32m+[m
+[32m+[m[32m    // bongo[m[41m [m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_bongo => Pan2 p_bongo => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/bongo.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1. => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.1 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_bongo.set( 10::ms, 10::ms, 0.6, 100::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_bongo.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_bongo.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_bongo;[m
+[32m+[m[32m    e_bongo =< p_bongo;[m
+[32m+[m[32m    p_bongo =< dac;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playChoke() // c[m
+[32m+[m[32m{[m
+[32m+[m[32m    2600 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // c[m[41m [m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_choke => Pan2 p_choke => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/choke.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.4 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_choke.set( 10::ms, 10::ms, 0.9, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_choke.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_choke.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_choke;[m
+[32m+[m[32m    e_choke =< p_choke;[m
+[32m+[m[32m    p_choke =< dac;[m[41m    [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playDong() // d[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    250 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // d[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_dong => Pan2 p_dong => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/drum_dong.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.7 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    0.9 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_dong.set( 20::ms, 30::ms, 0.8, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_dong.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_dong.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_dong;[m
+[32m+[m[32m    e_dong =< p_dong;[m
+[32m+[m[32m    p_dong =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBurp() // e[m
+[32m+[m[32m{[m
+[32m+[m[32m    200 => int startPos;[m
+[32m+[m[32m    80 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // e[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_burp => Pan2 p_burp => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/burp.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_burp.set( 20::ms, 30::ms, 0.8, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_burp.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_burp.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_burp;[m
+[32m+[m[32m    e_burp =< p_burp;[m
+[32m+[m[32m    p_burp =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playSteam() // f[m
+[32m+[m[32m{[m
+[32m+[m[32m    500 => int startPos;[m
+[32m+[m[32m    200 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // f[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_steam => Pan2 p_steam => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/steam.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    9 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_steam.set( 100::ms, 1::ms, 0.9, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_steam.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_steam.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_steam;[m
+[32m+[m[32m    e_steam =< p_steam;[m
+[32m+[m[32m    p_steam =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playDrag() // g[m
+[32m+[m[32m{[m
+[32m+[m[32m    210 => int startPos;[m
+[32m+[m[32m    80 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // g[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_drag => Pan2 p_drag => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/choke2.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_drag.set( 100::ms, 1::ms, 0.9, 80::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_drag.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_drag.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_drag;[m
+[32m+[m[32m    e_drag =< p_drag;[m
+[32m+[m[32m    p_drag =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playSigh() // h[m
+[32m+[m[32m{[m
+[32m+[m[32m    250 => int startPos;[m
+[32m+[m[32m    150 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // h[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_sigh => Pan2 p_sigh => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/sigh.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1.2 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_sigh.set( 10::ms, 1::ms, 0.9, 80::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_sigh.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_sigh.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_sigh;[m
+[32m+[m[32m    e_sigh =< p_sigh;[m
+[32m+[m[32m    p_sigh =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playWhee() // i[m
+[32m+[m[32m{[m
+[32m+[m[32m    150 => int startPos;[m
+[32m+[m[32m    150 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // i[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_whee => Pan2 p_whee => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/whee.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_whee.set( 20::ms, 30::ms, 0.8, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_whee.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_whee.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_whee;[m
+[32m+[m[32m    e_whee =< p_whee;[m
+[32m+[m[32m    p_whee =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBoil() // j[m
+[32m+[m[32m{[m
+[32m+[m[32m    320 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // j[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_boil => Pan2 p_boil => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/boil.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    e_boil.set( 30::ms, 10::ms, 0.8, 200::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_boil.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_boil.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_boil;[m
+[32m+[m[32m    e_boil =< p_boil;[m
+[32m+[m[32m    p_boil =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void play808() // k[m
+[32m+[m[32m{[m
+[32m+[m[32m    0 => int startPos;[m
+[32m+[m[32m    700 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // j[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_808 => Pan2 p_808 => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/808.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_808.set( 10::ms, 10::ms, 0.6, 100::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_808.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_808.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_808;[m
+[32m+[m[32m    e_808 =< p_808;[m
+[32m+[m[32m    p_808 =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playBubbles() // l[m
+[32m+[m[32m{[m
+[32m+[m[32m    153 => int startPos;[m
+[32m+[m[32m    50 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // l[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_bubbles => Pan2 p_bubbles => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/bubbles.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    3000 => sndbufArray[sbc].pos;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_bubbles.set( 30::ms, 1::ms, 1, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_bubbles.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_bubbles.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_bubbles;[m
+[32m+[m[32m    e_bubbles =< p_bubbles;[m
+[32m+[m[32m    p_bubbles =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playMama() // m[m
+[32m+[m[32m{[m
+[32m+[m[32m    200 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // m[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_mama => Pan2 p_mama => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/mama.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    0.9 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_mama.set( 80::ms, 1::ms, 1, 20::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_mama.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_mama.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_mama;[m
+[32m+[m[32m    e_mama =< p_mama;[m
+[32m+[m[32m    p_mama =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playMeow() // n[m
+[32m+[m[32m{[m
+[32m+[m[32m    50 => int startPos;[m
+[32m+[m[32m    150 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // n[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_meow_synth => Pan2 p_meow_synth => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/crying.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    4 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    0.8 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_meow_synth.set( 100::ms, 10::ms, 0.1, 50::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_meow_synth.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_meow_synth.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_meow_synth;[m
+[32m+[m[32m    e_meow_synth =< p_meow_synth;[m
+[32m+[m[32m    p_meow_synth =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playTongue() // o[m
+[32m+[m[32m{[m
+[32m+[m[32m    620 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // o[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_tongue => Pan2 p_tongue => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/tongue.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_tongue.set( 50::ms, 10::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_tongue.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_tongue.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_tongue;[m
+[32m+[m[32m    e_tongue =< p_tongue;[m
+[32m+[m[32m    p_tongue =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playPop() // p[m
+[32m+[m[32m{[m
+[32m+[m[32m    2450 => int startPos;[m
+[32m+[m[32m    50 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // p[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_pop => JCRev r => Pan2 p_pop => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/pop2.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0 => sndbufArray[sbc].pos;[m
+[32m+[m[32m    0.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    0.01 => r.mix;[m
+[32m+[m[32m    e_pop.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_pop.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_pop.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_pop;[m
+[32m+[m[32m    e_pop =< p_pop;[m
+[32m+[m[32m    p_pop =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playSqueak() // q[m
+[32m+[m[32m{[m
+[32m+[m[32m    1050 => int startPos;[m
+[32m+[m[32m    150 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // q[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_squeak => Pan2 p_squeak => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/squeak.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    1 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_squeak.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_squeak.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_squeak.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_squeak;[m
+[32m+[m[32m    e_squeak =< p_squeak;[m
+[32m+[m[32m    p_squeak =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playGrr() // r[m
+[32m+[m[32m{[m
+[32m+[m[32m    50 => int startPos;[m
+[32m+[m[32m    200 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // r[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_grr => Pan2 p_grr => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/grr.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.5 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_grr.set( 100::ms, 10::ms, 0.9, 100::ms );[m
+[32m+[m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_grr.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_grr.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_grr;[m
+[32m+[m[32m    e_grr =< p_grr;[m
+[32m+[m[32m    p_grr =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playWhisper() // s[m
+[32m+[m[32m{[m
+[32m+[m[32m    250 => int startPos;[m
+[32m+[m[32m    100 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // s[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_whisper => Pan2 p_whisper => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/whisper.aiff" => sndbufArray[sbc].read;[m
+[32m+[m[32m    8 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_whisper.set( 10::ms, 1::ms, 0.9, 10::ms );[m
+[32m+[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_whisper.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_whisper.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m
+[32m+[m[32m    sndbufArray[sbc] =< e_whisper;[m
+[32m+[m[32m    e_whisper =< p_whisper;[m
+[32m+[m[32m    p_whisper =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playSideStick() // t[m
+[32m+[m[32m{[m
+[32m+[m[32m    10 => int startPos;[m
+[32m+[m[32m    200 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // t[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_sidestick => Pan2 p_sidestick => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/drum_sideStick.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.7 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.0 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_sidestick.set( 0::ms, 50::ms, 0.8, 150::ms );[m
+[32m+[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_sidestick.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_sidestick.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_sidestick;[m
+[32m+[m[32m    e_sidestick =< p_sidestick;[m
+[32m+[m[32m    p_sidestick =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playAlien() // u[m
+[32m+[m[32m{[m
+[32m+[m[32m    100 => int startPos;[m
+[32m+[m[32m    70 => int len;[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    // u[m
+[32m+[m[32m    sndbufArray[sbc] => ADSR e_alien => Pan2 p_alien => dac.chan(finalCHAN);[m
+[32m+[m[32m    me.sourceDir() + "/alien.wav" => sndbufArray[sbc].read;[m
+[32m+[m[32m    0.8 => sndbufArray[sbc].gain;[m
+[32m+[m[32m    1.05 => sndbufArray[sbc].rate;[m
+[32m+[m[32m    e_alien.set( 1::ms, 50::ms, 0.8, 100::ms );[m
+[32m+[m[41m    [m
+[32m+[m[32m    (startPos*44.100) $ int => sndbufArray[sbc].pos;[m
+[32m+[m[32m    e_alien.keyOn();[m
+[32m+[m[32m    len::ms => now;[m
+[32m+[m[32m    e_alien.keyOff();[m
+[32m+[m[32m    10::ms => now;[m
+[32m+[m[41m    [m
+[32m+[m[32m    sndbufArray[sbc] =< e_alien;[m
+[32m+[m[32m    e_alien =< p_alien;[m
+[32m+[m[32m    p_alien =< dac;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfun void playVroom() // v[m
+[32m+[m[32m{[m
+[32m+[m[32m    6300 => int startPos;[m
+[32m+[m[32m    250 => int len;[m
+[32m+[m[41m    [m
+[3
