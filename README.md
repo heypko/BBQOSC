@@ -1,17 +1,17 @@
-##BBQOSC
+#BBQOSC
 
 A networked version of Hana Shin's BBQ piece for personal and/or ensemble performances.
 
-###Usage:
+##Usage:
 
-####Server:
+###Server:
 Start BBQ_serverSELECT.ck in command-line or miniAudicle.
 
 *'chuck BBQ_serverSELECT.ck'*
 
 All audio will come through the server-side.
 
-####Client:
+###Client:
 Start BBQ_clientSELECT.ck in command-line or miniAudicle with arguments
 
 *'chuck BBQ_clientSELECT.ck:IP_ADDRESS:OS_TYPE:SPEAKER_NUMBER:KEYBOARD_HID'*
