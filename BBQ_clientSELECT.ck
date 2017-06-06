@@ -1,8 +1,11 @@
 // launch as performer for BBQ_stereOSC
 
 /*
-    This IP needs to be changed
-    to the address of the server
+    run in either cmdline or miniAudicle w/ arguments
+
+    chuck BBQ_clientSELECT.ck:IP_ADDRESS:OS_TYPE:SPEAKER_NUMBER:KEYBOARD_HID
+
+    example: chuck BBQ_clientSELECT.ck:127.0.0.1:windows:1:0
 */
 
 // host name and port
@@ -16,8 +19,7 @@
 if( me.args() ) me.arg(0) => hostname;
 if( me.args() > 1 ) me.arg(1) => choice;
 if( me.args() > 2 ) me.arg(2) => Std.atoi => pan;
-if( me.args() > 3 ) me.arg(3) => Std.atoi => deviceNum;
-    
+if( me.args() > 3 ) me.arg(3) => Std.atoi => deviceNum; 
 
 // send object
 OscSend xmit;
@@ -27,21 +29,16 @@ xmit.setHost( hostname, port );
 
 // instantiate a HidIn object
 Hid hi;
-//KBHit kb;
 
 // structure to hold HID messages
 HidMsg msg;
 
 // open keyboard
 if( !hi.openKeyboard( deviceNum ) ) me.exit();
+
 // successful! print name of device
 <<< "keyboard '", hi.name(), "' ready" >>>;
 
-//if ( choice == "mac" ) {                
-//    parseMac(msg.which) => xmit.addInt;
-//} else {
-//    msg.which => xmit.addInt;
-//}
 
 // infinite time loop
 while( true )
@@ -71,7 +68,7 @@ while( true )
     }
 }
 
-
+// key parser for certain macbook keyboards
 fun int parseMac( int which )
 {
     int num;
@@ -122,5 +119,5 @@ fun int parseMac( int which )
     else if( which == 28 ) // y
 		21 => num;
     else if( which == 29 ) // z
-        44 => num;
+	        44 => num;
 }
