@@ -3,26 +3,26 @@
 // BBQ by Hana Shin
 // 2014
 
-// b,,b,,q, b,,b,,q, b,,b,,q, b,,b,,q, 
+// b,,b,,q, b,,b,,q, b,,b,,q, b,,b,,q,
 // b,spamq b,spamq b,spamq b,spamg bv,szzw
 // bdot,ms bdot,ms bdot,ms bdoamar
 // bdty,,a, bdtyhha, bdt,bdt, ffszvcp,
 // bdtfsi,, bdtfsiu, b,ssvj,, dahda,a,
-// blop,op, blop,op, blop,op, bloblop, 
+// blop,op, blop,op, blop,op, bloblop,
 // sndbufArray[sbc],,, sponcc,, bswqjspf bahsz,,,
 
 // rahrah,,roar,rr,r,grr,roar,ra
 // rahrah,,roar,rr,r,grr,roar,rah
 // lollpop lollipoplollpop lollpom
 // lollpop lollipoploll
-// munch,y, munchii, munomnom umnumnua 
+// munch,y, munchii, munomnom umnumnua
 
 // wumpow,, wum,now, wumpowp lollpur
 // s,snap,, oshnaps, sndbufArray[sbc]sloc, snapz
 // zz,sfaz, zz,asazz ,asfzza, shizzle
 
-// b,,b,,q, b,,b,,q, b,,b,,q, b,,b,,q, 
-// b,,b qii, b,,b qui b,uibuy tstsha,, 
+// b,,b,,q, b,,b,,q, b,,b,,q, b,,b,,q,
+// b,,b qii, b,,b qui b,uibuy tstsha,,
 // b,sizzle b,sizzle b,sizzle shizip,, a
 
 0 => int startCHAN;                 // Audio Channel Start Index
@@ -42,18 +42,18 @@ fun void playSighReverse() // a
 
     // a
     sndbufArray[sbc] => ADSR e_sighReverse => Pan2 p_sighReverse => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/khaa.wav" => string fname;
+    me.sourceDir() + "/sounds/khaa.wav" => string fname;
     fname => sndbufArray[sbc].read;
     0.7 => sndbufArray[sbc].gain;
     1 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_sighReverse.pan;
     e_sighReverse.set( 10::ms, 10::ms, 0.9, 100::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_sighReverse.keyOn();
     len::ms => now;
     e_sighReverse.keyOff();
-    10::ms => now;   
+    10::ms => now;
 }
 
 fun void playBongo() // b
@@ -61,70 +61,70 @@ fun void playBongo() // b
     0 => int startPos;
     1000 => int len;
     <<<sbc>>>;
-    // bongo 
+    // bongo
     sndbufArray[sbc] => ADSR e_bongo => Pan2 p_bongo => dac.chan(startCHAN);
-    me.sourceDir() + "/bongo.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/bongo.wav" => sndbufArray[sbc].read;
     .5 => sndbufArray[sbc].gain;
     1.1 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0 ) => p_bongo.pan;
     e_bongo.set( 10::ms, 10::ms, 0.6, 100::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_bongo.keyOn();
     len::ms => now;
     e_bongo.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_bongo;
     e_bongo =< p_bongo;
     p_bongo =< dac;
-    
-    
+
+
 }
 
 fun void playChoke() // c
 {
     2600 => int startPos;
     100 => int len;
-    
-    // c 
+
+    // c
     sndbufArray[sbc] => ADSR e_choke => Pan2 p_choke => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/choke.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/choke.wav" => sndbufArray[sbc].read;
     0.4 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_choke.pan;
     e_choke.set( 10::ms, 10::ms, 0.9, 50::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_choke.keyOn();
     len::ms => now;
     e_choke.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_choke;
     e_choke =< p_choke;
-    p_choke =< dac;    
+    p_choke =< dac;
 }
 
 fun void playDong() // d
 {
     0 => int startPos;
     250 => int len;
-    
+
     // d
     sndbufArray[sbc] => ADSR e_dong => Pan2 p_dong => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/drum_dong.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/drum_dong.wav" => sndbufArray[sbc].read;
     0.7 => sndbufArray[sbc].gain;
     0.9 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_dong.pan;
     e_dong.set( 20::ms, 30::ms, 0.8, 50::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_dong.keyOn();
     len::ms => now;
     e_dong.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_dong;
     e_dong =< p_dong;
     p_dong =< dac;
@@ -134,21 +134,21 @@ fun void playBurp() // e
 {
     200 => int startPos;
     80 => int len;
-    
+
     // e
     sndbufArray[sbc] => ADSR e_burp => Pan2 p_burp => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/burp.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/burp.wav" => sndbufArray[sbc].read;
     1 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_burp.pan;
     e_burp.set( 20::ms, 30::ms, 0.8, 50::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_burp.keyOn();
     len::ms => now;
     e_burp.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_burp;
     e_burp =< p_burp;
     p_burp =< dac;
@@ -158,21 +158,21 @@ fun void playSteam() // f
 {
     500 => int startPos;
     200 => int len;
-    
+
     // f
     sndbufArray[sbc] => ADSR e_steam => Pan2 p_steam => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/steam.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/steam.wav" => sndbufArray[sbc].read;
     9 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_steam.pan;
     e_steam.set( 100::ms, 1::ms, 0.9, 50::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_steam.keyOn();
     len::ms => now;
     e_steam.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_steam;
     e_steam =< p_steam;
     p_steam =< dac;
@@ -182,21 +182,21 @@ fun void playDrag() // g
 {
     210 => int startPos;
     80 => int len;
-    
+
     // g
     sndbufArray[sbc] => ADSR e_drag => Pan2 p_drag => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/choke2.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/choke2.wav" => sndbufArray[sbc].read;
     1 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_drag.pan;
     e_drag.set( 100::ms, 1::ms, 0.9, 80::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_drag.keyOn();
     len::ms => now;
     e_drag.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_drag;
     e_drag =< p_drag;
     p_drag =< dac;
@@ -206,21 +206,21 @@ fun void playSigh() // h
 {
     250 => int startPos;
     150 => int len;
-    
+
     // h
     sndbufArray[sbc] => ADSR e_sigh => Pan2 p_sigh => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/sigh.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/sigh.wav" => sndbufArray[sbc].read;
     1.2 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_sigh.pan;
     e_sigh.set( 10::ms, 1::ms, 0.9, 80::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_sigh.keyOn();
     len::ms => now;
     e_sigh.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_sigh;
     e_sigh =< p_sigh;
     p_sigh =< dac;
@@ -230,21 +230,21 @@ fun void playWhee() // i
 {
     150 => int startPos;
     150 => int len;
-    
+
     // i
     sndbufArray[sbc] => ADSR e_whee => Pan2 p_whee => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/whee.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/whee.wav" => sndbufArray[sbc].read;
     0.5 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_whee.pan;
     e_whee.set( 20::ms, 30::ms, 0.8, 50::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_whee.keyOn();
     len::ms => now;
     e_whee.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_whee;
     e_whee =< p_whee;
     p_whee =< dac;
@@ -254,20 +254,20 @@ fun void playBoil() // j
 {
     320 => int startPos;
     100 => int len;
-    
+
     // j
     sndbufArray[sbc] => ADSR e_boil => Pan2 p_boil => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/boil.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/boil.wav" => sndbufArray[sbc].read;
     1 => sndbufArray[sbc].gain;
     Std.rand2f( -0.8, 0.8 ) => p_boil.pan;
     e_boil.set( 30::ms, 10::ms, 0.8, 200::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_boil.keyOn();
     len::ms => now;
     e_boil.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_boil;
     e_boil =< p_boil;
     p_boil =< dac;
@@ -277,21 +277,21 @@ fun void play808() // k
 {
     0 => int startPos;
     700 => int len;
-    
+
     // j
     sndbufArray[sbc] => ADSR e_808 => Pan2 p_808 => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/808.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/808.wav" => sndbufArray[sbc].read;
     1.5 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_808.pan;
     e_808.set( 10::ms, 10::ms, 0.6, 100::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_808.keyOn();
     len::ms => now;
     e_808.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_808;
     e_808 =< p_808;
     p_808 =< dac;
@@ -301,22 +301,22 @@ fun void playBubbles() // l
 {
     153 => int startPos;
     50 => int len;
-    
+
     // l
     sndbufArray[sbc] => ADSR e_bubbles => Pan2 p_bubbles => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/bubbles.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/bubbles.wav" => sndbufArray[sbc].read;
     3000 => sndbufArray[sbc].pos;
     1 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_bubbles.pan;
     e_bubbles.set( 30::ms, 1::ms, 1, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_bubbles.keyOn();
     len::ms => now;
     e_bubbles.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_bubbles;
     e_bubbles =< p_bubbles;
     p_bubbles =< dac;
@@ -326,21 +326,21 @@ fun void playMama() // m
 {
     200 => int startPos;
     100 => int len;
-    
+
     // m
     sndbufArray[sbc] => ADSR e_mama => Pan2 p_mama => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/mama.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/mama.wav" => sndbufArray[sbc].read;
     1.5 => sndbufArray[sbc].gain;
     0.9 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_mama.pan;
     e_mama.set( 80::ms, 1::ms, 1, 20::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_mama.keyOn();
     len::ms => now;
     e_mama.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_mama;
     e_mama =< p_mama;
     p_mama =< dac;
@@ -350,21 +350,21 @@ fun void playMeow() // n
 {
     50 => int startPos;
     150 => int len;
-    
+
     // n
     sndbufArray[sbc] => ADSR e_meow_synth => Pan2 p_meow_synth => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/crying.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/crying.wav" => sndbufArray[sbc].read;
     4 => sndbufArray[sbc].gain;
     0.8 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_meow_synth.pan;
     e_meow_synth.set( 100::ms, 10::ms, 0.1, 50::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_meow_synth.keyOn();
     len::ms => now;
     e_meow_synth.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_meow_synth;
     e_meow_synth =< p_meow_synth;
     p_meow_synth =< dac;
@@ -374,15 +374,15 @@ fun void playTongue() // o
 {
     620 => int startPos;
     100 => int len;
-    
+
     // o
     sndbufArray[sbc] => ADSR e_tongue => Pan2 p_tongue => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/tongue.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/tongue.wav" => sndbufArray[sbc].read;
     1 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_tongue.pan;
     e_tongue.set( 50::ms, 10::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_tongue.keyOn();
     len::ms => now;
@@ -398,17 +398,17 @@ fun void playPop() // p
 {
     2450 => int startPos;
     50 => int len;
-    
+
     // p
     sndbufArray[sbc] => ADSR e_pop => JCRev r => Pan2 p_pop => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/pop2.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/pop2.wav" => sndbufArray[sbc].read;
     0 => sndbufArray[sbc].pos;
     0.5 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     0.01 => r.mix;
     Std.rand2f( -0.8, 0.8 ) => p_pop.pan;
     e_pop.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_pop.keyOn();
     len::ms => now;
@@ -424,15 +424,15 @@ fun void playSqueak() // q
 {
     1050 => int startPos;
     150 => int len;
-    
+
     // q
     sndbufArray[sbc] => ADSR e_squeak => Pan2 p_squeak => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/squeak.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/squeak.wav" => sndbufArray[sbc].read;
     1 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( 0, 0.8 ) => p_squeak.pan;
     e_squeak.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_squeak.keyOn();
     len::ms => now;
@@ -450,7 +450,7 @@ fun void playGrr() // r
     200 => int len;
     // r
     sndbufArray[sbc] => ADSR e_grr => Pan2 p_grr => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/grr.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/grr.wav" => sndbufArray[sbc].read;
     0.5 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_grr.pan;
@@ -473,13 +473,13 @@ fun void playWhisper() // s
     100 => int len;
     // s
     sndbufArray[sbc] => ADSR e_whisper => Pan2 p_whisper => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/whisper.aiff" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/whisper.aiff" => sndbufArray[sbc].read;
     8 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_whisper.pan;
     e_whisper.set( 10::ms, 1::ms, 0.9, 10::ms );
 
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_whisper.keyOn();
     len::ms => now;
@@ -497,19 +497,19 @@ fun void playSideStick() // t
     200 => int len;
     // t
     sndbufArray[sbc] => ADSR e_sidestick => Pan2 p_sidestick => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/drum_sideStick.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/drum_sideStick.wav" => sndbufArray[sbc].read;
     0.7 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_sidestick.pan;
     e_sidestick.set( 0::ms, 50::ms, 0.8, 150::ms );
 
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_sidestick.keyOn();
     len::ms => now;
     e_sidestick.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_sidestick;
     e_sidestick =< p_sidestick;
     p_sidestick =< dac;
@@ -520,18 +520,18 @@ fun void playAlien() // u
     100 => int startPos;
     70 => int len;
     sndbufArray[sbc] => ADSR e_alien => Pan2 p_alien => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/alien.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/alien.wav" => sndbufArray[sbc].read;
     0.8 => sndbufArray[sbc].gain;
     1.05 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_alien.pan;
     e_alien.set( 1::ms, 50::ms, 0.8, 100::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_alien.keyOn();
     len::ms => now;
     e_alien.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_alien;
     e_alien =< p_alien;
     p_alien =< dac;
@@ -542,18 +542,18 @@ fun void playVroom() // v
     6300 => int startPos;
     250 => int len;
     sndbufArray[sbc] => ADSR e_vroom => Pan2 p_vroom => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/vroom.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/vroom.wav" => sndbufArray[sbc].read;
     1 => sndbufArray[sbc].gain;
     1.5 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_vroom.pan;
     e_vroom.set( 50::ms, 50::ms, 0.9, 50::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_vroom.keyOn();
     len::ms => now;
     e_vroom.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_vroom;
     e_vroom =< p_vroom;
     p_vroom =< dac;
@@ -564,18 +564,18 @@ fun void playMonkey() // w
     8200 => int startPos;
     300 => int len;
     sndbufArray[sbc] => ADSR e_monkey => Pan2 p_monkey => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/monkey.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/monkey.wav" => sndbufArray[sbc].read;
     0.3 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_monkey.pan;
     e_monkey.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_monkey.keyOn();
     len::ms => now;
     e_monkey.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_monkey;
     e_monkey =< p_monkey;
     p_monkey =< dac;
@@ -586,18 +586,18 @@ fun void playBoing() // y
     20 => int startPos;
     240 => int len;
     sndbufArray[sbc] => ADSR e_boing => Pan2 p_boing => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/boing.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/boing.wav" => sndbufArray[sbc].read;
     .4 => sndbufArray[sbc].gain;
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_boing.pan;
     e_boing.set( 5::ms, 50::ms, 0.9, 80::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_boing.keyOn();
     len::ms => now;
     e_boing.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_boing;
     e_boing =< p_boing;
     p_boing =< dac;
@@ -608,18 +608,18 @@ fun void playBuzz() // z
     700 => int startPos;
     140 => int len;
     sndbufArray[sbc] => ADSR e_buzz => Pan2 p_buzz => dac.chan(Std.rand2(startCHAN,endCHAN));
-    me.sourceDir() + "/buzz.wav" => sndbufArray[sbc].read;
+    me.sourceDir() + "/sounds/buzz.wav" => sndbufArray[sbc].read;
     1 => sndbufArray[sbc].gain;
     1.5 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_buzz.pan;
     e_buzz.set( 50::ms, 50::ms, 0.9, 50::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_buzz.keyOn();
     len::ms => now;
     e_buzz.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_buzz;
     e_buzz =< p_buzz;
     p_buzz =< dac;
@@ -635,17 +635,17 @@ fun void playLight() // ,
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_light.pan;
     e_light.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_light.keyOn();
     len::ms => now;
     e_light.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_light;
     e_light =< p_light;
     p_light =< dac;
-    
+
 }
 
 fun void playMedium() // .
@@ -658,13 +658,13 @@ fun void playMedium() // .
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_medium.pan;
     e_medium.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_medium.keyOn();
     len::ms => now;
     e_medium.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_medium;
     e_medium =< p_medium;
     p_medium =< dac;
@@ -680,13 +680,13 @@ fun void playHeavy() // .
     1.0 => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_heavy.pan;
     e_heavy.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_heavy.keyOn();
     len::ms => now;
     e_heavy.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_heavy;
     e_heavy =< p_heavy;
     p_heavy =< dac;
@@ -703,17 +703,17 @@ fun void playLow1() //
     numpadRate => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_low1.pan;
     e_low1.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_low1.keyOn();
     len::ms => now;
     e_low1.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_low1;
     e_low1 =< p_low1;
     p_low1 =< dac;
-    
+
 }
 
 fun void playLow2() //
@@ -726,17 +726,17 @@ fun void playLow2() //
     numpadRate => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_low2.pan;
     e_low2.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_low2.keyOn();
     len::ms => now;
     e_low2.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_low2;
     e_low2 =< p_low2;
     p_low2 =< dac;
-    
+
 }
 
 fun void playLow3() //
@@ -749,17 +749,17 @@ fun void playLow3() //
     numpadRate => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_low3.pan;
     e_low3.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_low3.keyOn();
     len::ms => now;
     e_low3.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_low3;
     e_low3 =< p_low3;
     p_low3 =< dac;
-    
+
 }
 
 fun void playMid1() //
@@ -772,17 +772,17 @@ fun void playMid1() //
     numpadRate => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_mid1.pan;
     e_mid1.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_mid1.keyOn();
     len::ms => now;
     e_mid1.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_mid1;
     e_mid1 =< p_mid1;
     p_mid1 =< dac;
-    
+
 }
 
 fun void playMid2() //
@@ -795,17 +795,17 @@ fun void playMid2() //
     numpadRate => sndbufArray[sbc].rate;
     Std.rand2f( -0.8, 0.8 ) => p_mid2.pan;
     e_mid2.set( 10::ms, 1::ms, 0.9, 10::ms );
-    
+
     (startPos*44.100) $ int => sndbufArray[sbc].pos;
     e_mid2.keyOn();
     len::ms => now;
     e_mid2.keyOff();
     10::ms => now;
-    
+
     sndbufArray[sbc] =< e_mid2;
     e_mid2 =< p_mid2;
     p_mid2 =< dac;
-    
+
 }
 
 
@@ -832,13 +832,13 @@ oin.addAddress( "/sndbuf/bbq/number, i" );
 
 // infinite event loop
 while( true )
-{       
+{
     // wait for event to arrive
     oin => now;
 
-    // grab the next message from the queue. 
+    // grab the next message from the queue.
     while ( oin.recv(msg) != 0 )
-    {   
+    {
         // getFloat fetches the expected float (as indicated by "f")
         msg.getInt(0) => int which;
         // print
@@ -848,10 +848,10 @@ while( true )
     }
 }
 
-// function that parses keyboard presses 
+// function that parses keyboard presses
 fun void parseKeys( int which )
 {
-    // match numbers to letters and increment the appropriate layer variable 
+    // match numbers to letters and increment the appropriate layer variable
     if( which == 30 ) { // a
         spork ~playSighReverse();
         (sbc+1)%instanceCount => sbc;
@@ -859,7 +859,7 @@ fun void parseKeys( int which )
     else if( which == 48 ) { // b
         spork ~playBongo();
         (sbc+1)%instanceCount => sbc;
-    }   
+    }
     else if( which == 46 ) { // c
         spork ~playChoke();
         (sbc+1)%instanceCount => sbc;
@@ -964,7 +964,7 @@ fun void parseKeys( int which )
         spork ~playHeavy();
         (sbc+1)%instanceCount => sbc;
     }
-    
+
     // Numpad
     else if( which == 79 ) {  // 1
         spork ~playLow1();
@@ -978,7 +978,7 @@ fun void parseKeys( int which )
         spork ~playLow3();
         (sbc+1)%instanceCount => sbc;
     }
-    
+
     else if( which == 75 ) {  // 1
         spork ~playMid1();
         (sbc+1)%instanceCount => sbc;
@@ -987,7 +987,7 @@ fun void parseKeys( int which )
         spork ~playMid2();
         (sbc+1)%instanceCount => sbc;
     }
-    
+
     else if( which == 78 ) {  // +
         numpadRate + .1 => numpadRate;
         <<<"numpadRate = " + numpadRate>>>;
@@ -996,6 +996,5 @@ fun void parseKeys( int which )
         numpadRate - .1 => numpadRate;
         <<<"numpadRate = " + numpadRate>>>;
     }
-    
-}
 
+}
